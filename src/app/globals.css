@@ -1,26 +1,181 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Theme (Default: Biru Muda & Putih Bersih) */
+  --bg-base: #f0f7ff;
+  --bg-gradient: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 40%, #ffffff 100%);
+  --surface-card: #ffffff;
+  --surface-muted: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --primary-color: #0284c7;
+  --primary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  --shadow-card: 0 10px 25px -5px rgba(2, 132, 199, 0.08), 0 8px 10px -6px rgba(2, 132, 199, 0.04);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html.dark {
+  /* Dark Theme (Midnight Navy & Electric Sky Blue) */
+  --bg-base: #070d18;
+  --bg-gradient: linear-gradient(180deg, #0f172a 0%, #090e17 50%, #070d18 100%);
+  --surface-card: #0f172a;
+  --surface-muted: #1e293b;
+  --surface-hover: #1e293b;
+  --border-color: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --primary-color: #38bdf8;
+  --primary-gradient: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-base);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-plus-jakarta), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* ── Primary Button ── */
+.btn-primary-sky {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px 0 rgba(2, 132, 199, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-sky:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+  box-shadow: 0 6px 18px 0 rgba(2, 132, 199, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-primary-sky:active {
+  transform: translateY(0);
+}
+
+/* ── Card Component ── */
+.yuuta-card {
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.04), 0 4px 16px -4px rgba(2, 132, 199, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.yuuta-card:hover {
+  box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.10), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
+}
+
+html.dark .yuuta-card {
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3), 0 4px 16px -4px rgba(0, 0, 0, 0.2);
+}
+
+html.dark .yuuta-card:hover {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4), 0 2px 8px -2px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Gradient Text ── */
+.gradient-text-sky {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+html.dark .gradient-text-sky {
+  background: linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── TipTap ProseMirror Editor Styling ── */
+.tiptap {
+  outline: none;
+  min-height: 100%;
+}
+.tiptap p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+.tiptap h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #0284c7;
+}
+html.dark .tiptap h2 {
+  color: #38bdf8;
+}
+.tiptap h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+html.dark .tiptap h3 {
+  color: #f8fafc;
+}
+.tiptap em, .tiptap i {
+  font-style: italic;
+  color: #0369a1;
+}
+html.dark .tiptap em, html.dark .tiptap i {
+  color: #7dd3fc;
+}
+.tiptap strong, .tiptap b {
+  font-weight: 700;
+}
+.tiptap ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.tiptap ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.tiptap blockquote {
+  border-left: 3px solid #38bdf8;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
