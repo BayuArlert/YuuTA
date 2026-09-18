@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, BookOpen, Sparkles, ArrowRight, ArrowLeft, Check, FileText } from "lucide-react";
+import { GraduationCap, BookOpen, Sparkles, ArrowRight, ArrowLeft, Check, FileText, Quote } from "lucide-react";
 
 const DOC_TYPES = [
   {
@@ -22,9 +22,27 @@ const DOC_TYPES = [
 ];
 
 const CITATION_STYLES = [
-  { value: "APA", label: "APA (7th Edition)", desc: "Umum digunakan pada rumpun ilmu sosial, psikologi, pendidikan, dan humaniora." },
-  { value: "IEEE", label: "IEEE Style", desc: "Format standar untuk ilmu komputer, teknik elektro, informatika, dan teknologi." },
-  { value: "VANCOUVER", label: "Vancouver (Numeric)", desc: "Format referensi numerik untuk rumpun kedokteran, farmasi, dan kesehatan." },
+  {
+    value: "APA",
+    label: "APA (7th Edition)",
+    system: "Sistem Nama-Tahun",
+    example: "(Kurniawan, 2024)",
+    desc: "Format standar paling umum untuk rumpun ilmu sosial, psikologi, pendidikan, ekonomi, dan humaniora.",
+  },
+  {
+    value: "IEEE",
+    label: "IEEE Style",
+    system: "Sistem Numerik Kurung Siku",
+    example: "[1] / [1, 2]",
+    desc: "Format standar untuk ilmu komputer, teknik informatika, teknik elektro, dan bidang keteknikan.",
+  },
+  {
+    value: "VANCOUVER",
+    label: "Vancouver Style",
+    system: "Sistem Numerik Berurutan",
+    example: "(1) / 1",
+    desc: "Format referensi numerik berbasis urutan kemunculan untuk bidang kedokteran, farmasi, dan kesehatan.",
+  },
 ];
 
 export default function NewDocumentPage() {
@@ -208,30 +226,64 @@ export default function NewDocumentPage() {
                     key={cs.value}
                     type="button"
                     onClick={() => setCitation(cs.value)}
-                    className={`w-full p-4 rounded-xl text-left border-2 transition-all flex items-center justify-between cursor-pointer ${
+                    className={`w-full p-4 rounded-2xl text-left border-2 transition-all flex items-start justify-between gap-4 cursor-pointer ${
                       isSelected
-                        ? "bg-sky-50/80 dark:bg-sky-950/50 border-sky-500 dark:border-sky-400 shadow-xs"
+                        ? "bg-sky-50/80 dark:bg-sky-950/50 border-sky-500 dark:border-sky-400 shadow-md shadow-sky-500/10"
                         : "bg-slate-50/50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-700/80 hover:border-sky-300 dark:hover:border-slate-600"
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs ${
-                        isSelected
-                          ? "bg-sky-600 text-white"
-                          : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
-                      }`}>
-                        {cs.value}
+                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                      {/* Icon Container */}
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                          isSelected
+                            ? "bg-sky-600 text-white shadow-xs shadow-sky-600/30"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                        }`}
+                      >
+                        <Quote className="w-5 h-5" />
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
-                          {cs.label}
-                        </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+
+                      {/* Text Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                            {cs.label}
+                          </h3>
+                          <span
+                            className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${
+                              isSelected
+                                ? "bg-sky-100 dark:bg-sky-900/70 text-sky-800 dark:text-sky-300"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                            }`}
+                          >
+                            {cs.system}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                           {cs.desc}
                         </p>
+
+                        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500 font-mono">
+                          <span className="font-sans font-medium text-slate-500 dark:text-slate-400">Contoh format:</span>
+                          <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
+                            {cs.example}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    {isSelected && <Check className="w-5 h-5 text-sky-600 dark:text-sky-400 shrink-0" />}
+
+                    {/* Radio Indicator */}
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                        isSelected
+                          ? "border-sky-600 bg-sky-600 text-white"
+                          : "border-slate-300 dark:border-slate-600 bg-transparent"
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                    </div>
                   </button>
                 );
               })}
