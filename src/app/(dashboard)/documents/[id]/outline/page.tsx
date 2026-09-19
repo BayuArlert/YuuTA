@@ -56,12 +56,18 @@ export default async function OutlinePage({ params }: Props) {
         <div className="flex items-center gap-2 mb-3">
           <span
             className={`text-xs px-2.5 py-1 rounded-full font-bold tracking-wide ${
-              isSkripsi
+              document.documentType === "PROPOSAL"
+                ? "bg-indigo-100 dark:bg-indigo-950/70 text-indigo-800 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60"
+                : isSkripsi
                 ? "bg-sky-100 dark:bg-sky-950/70 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60"
                 : "bg-cyan-100 dark:bg-cyan-950/70 text-cyan-800 dark:text-cyan-300 border border-cyan-200/60 dark:border-cyan-800/60"
             }`}
           >
-            {isSkripsi ? "🎓 SKRIPSI (BAB I-V)" : "📊 JURNAL ILMIAH (IMRaD)"}
+            {document.documentType === "PROPOSAL"
+              ? "📘 PROPOSAL PENELITIAN (STEKOM)"
+              : isSkripsi
+              ? "🎓 SKRIPSI (BAB I-V)"
+              : "📊 JURNAL ILMIAH"}
           </span>
           <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono font-medium">
             Pedoman Sitasi: {document.citationStyle}

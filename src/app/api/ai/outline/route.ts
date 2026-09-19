@@ -45,7 +45,8 @@ export async function POST(req: NextRequest) {
     const prompt = buildOutlinePrompt(
       document.topic,
       document.title,
-      document.documentType as DocumentType
+      document.documentType as DocumentType,
+      document.studyProgram || "Teknik Informatika"
     );
 
     // Panggil Gemini

@@ -16,6 +16,7 @@ datasource db {
 enum DocumentType {
   JURNAL
   SKRIPSI
+  PROPOSAL
 }
 
 enum CitationStyle {
@@ -42,6 +43,21 @@ enum SectionKey {
   BAB_III
   BAB_IV
   BAB_V
+  // Proposal Penelitian (STEKOM & Umum)
+  JUDUL_PENELITIAN
+  LATAR_BELAKANG
+  IDENTIFIKASI_MASALAH
+  PEMBATASAN_MASALAH
+  RUMUSAN_MASALAH
+  TUJUAN_PENELITIAN
+  MANFAAT_PENELITIAN
+  SPESIFIKASI_PRODUK
+  DESKRIPSI_TEORITIK
+  KAJIAN_RELEVAN
+  KERANGKA_BERPIKIR
+  METODE_PENGEMBANGAN
+  JADWAL_PENELITIAN
+  DAFTAR_PUSTAKA
 }
 
 // ─── MODELS ──────────────────────────────────────────────────────────────────
@@ -109,6 +125,12 @@ model Document {
   title         String
   topic         String        @db.Text
   documentType  DocumentType
+  templateKey   String?       @default("STEKOM")
+  authorName    String?
+  studentNim    String?
+  studyProgram  String?       @default("Teknik Informatika")
+  institution   String?       @default("Universitas STEKOM")
+  academicYear  String?
   citationStyle CitationStyle @default(APA)
   status        String        @default("active")
   createdAt     DateTime      @default(now())

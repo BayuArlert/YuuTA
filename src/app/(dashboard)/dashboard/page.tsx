@@ -165,12 +165,14 @@ export default async function DashboardPage() {
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <span
                         className={`text-xs px-2.5 py-1 rounded-md font-semibold tracking-wide ${
-                          isSkripsi
+                          doc.documentType === "PROPOSAL"
+                            ? "bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60"
+                            : isSkripsi
                             ? "bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60"
                             : "bg-cyan-50 dark:bg-cyan-950/70 text-cyan-700 dark:text-cyan-300 border border-cyan-200/60 dark:border-cyan-800/60"
                         }`}
                       >
-                        {isSkripsi ? "🎓 SKRIPSI (BAB I-V)" : "📊 JURNAL (IMRaD)"}
+                        {doc.documentType === "PROPOSAL" ? "📘 PROPOSAL (STEKOM)" : isSkripsi ? "🎓 SKRIPSI (BAB I-V)" : "📊 JURNAL"}
                       </span>
                       <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500 uppercase">
                         {doc.citationStyle}

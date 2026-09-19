@@ -8,7 +8,7 @@ export interface GeneratedOutline {
   sections: OutlineSection[];
 }
 
-export type DocumentTypeValue = "JURNAL" | "SKRIPSI";
+export type DocumentTypeValue = "PROPOSAL" | "SKRIPSI" | "JURNAL";
 export type CitationStyleValue = "APA" | "IEEE" | "VANCOUVER";
 export type SectionStatusValue = "EMPTY" | "DRAFT" | "DONE";
 
@@ -51,6 +51,12 @@ export interface DocumentWithSections {
   title: string;
   topic: string;
   documentType: DocumentTypeValue;
+  templateKey?: string | null;
+  authorName?: string | null;
+  studentNim?: string | null;
+  studyProgram?: string | null;
+  institution?: string | null;
+  academicYear?: string | null;
   citationStyle: CitationStyleValue;
   status: string;
   createdAt: Date;

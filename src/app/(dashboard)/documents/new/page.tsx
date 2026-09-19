@@ -2,23 +2,43 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, BookOpen, Sparkles, ArrowRight, ArrowLeft, Check, FileText, Quote } from "lucide-react";
+import { GraduationCap, BookOpen, Sparkles, ArrowRight, ArrowLeft, Check, FileText, Quote, Building2, User, Hash } from "lucide-react";
 
 const DOC_TYPES = [
   {
+    value: "PROPOSAL",
+    label: "Proposal Penelitian",
+    desc: "Format resmi proposal skripsi/tugas akhir terstruktur 14 bagian: Latar Belakang, Identifikasi, Spesifikasi Produk R&D, Kajian Relevan, hingga Jadwal & Daftar Pustaka.",
+    icon: BookOpen,
+    tag: "Format Resmi Kampus",
+  },
+  {
     value: "SKRIPSI",
-    label: "Skripsi (Standar Indonesia)",
+    label: "Skripsi Lengkap (BAB I - V)",
     desc: "BAB I s/d BAB V: Pendahuluan, Tinjauan Pustaka, Metodologi Penelitian, Hasil & Pembahasan, serta Kesimpulan & Saran.",
     icon: GraduationCap,
     tag: "BAB I - BAB V",
   },
+];
+
+const UNIVERSITY_TEMPLATES = [
   {
-    value: "JURNAL",
-    label: "Jurnal Ilmiah (IMRaD)",
-    desc: "Format internasional: Introduction, Methods, Results, and Discussion. Ideal untuk publikasi konferensi & jurnal.",
-    icon: BookOpen,
-    tag: "Format IMRaD",
+    key: "STEKOM",
+    name: "Universitas STEKOM (Sains & Teknologi Komputer)",
+    faculty: "Program Studi S1 (Teknik Informatika, Sistem Informasi, Bisnis, Desain)",
+    desc: "Standar resmi: Margin 4-3-3-3 cm, Font Times New Roman 12pt, Cover Resmi STEKOM, Sistematika 14 Bagian Tanpa BAB Kaku, dan Tabel Kajian Relevan.",
+    recommended: true,
   },
+];
+
+const STUDY_PROGRAMS = [
+  "Teknik Informatika",
+  "Sistem Informasi",
+  "Sistem Komputer",
+  "Bisnis Digital",
+  "Manajemen",
+  "Desain Komunikasi Visual",
+  "Komputerisasi Akuntansi",
 ];
 
 const CITATION_STYLES = [
@@ -26,32 +46,39 @@ const CITATION_STYLES = [
     value: "APA",
     label: "APA (7th Edition)",
     system: "Sistem Nama-Tahun",
-    example: "(Kurniawan, 2024)",
-    desc: "Format standar paling umum untuk rumpun ilmu sosial, psikologi, pendidikan, ekonomi, dan humaniora.",
+    example: "(Sugiyono, 2021) / (Pressman & Maxim, 2020)",
+    desc: "Format standar akademik paling umum untuk rumpun teknologi informasi, bisnis, manajemen, dan sosial.",
   },
   {
     value: "IEEE",
     label: "IEEE Style",
     system: "Sistem Numerik Kurung Siku",
     example: "[1] / [1, 2]",
-    desc: "Format standar untuk ilmu komputer, teknik informatika, teknik elektro, dan bidang keteknikan.",
+    desc: "Format standar untuk publikasi teknik, ilmu komputer murni, dan rekayasa elektronika.",
   },
   {
     value: "VANCOUVER",
     label: "Vancouver Style",
     system: "Sistem Numerik Berurutan",
     example: "(1) / 1",
-    desc: "Format referensi numerik berbasis urutan kemunculan untuk bidang kedokteran, farmasi, dan kesehatan.",
+    desc: "Format referensi numerik berbasis urutan kemunculan untuk bidang biomedis dan kesehatan.",
   },
 ];
 
 export default function NewDocumentPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [docType, setDocType] = useState("SKRIPSI");
+  const [docType, setDocType] = useState("PROPOSAL");
+  const [templateKey, setTemplateKey] = useState("STEKOM");
   const [citation, setCitation] = useState("APA");
+
+  // Form Fields
   const [title, setTitle] = useState("");
   const [topic, setTopic] = useState("");
+  const [authorName, setAuthorName] = useState("");
+  const [studentNim, setStudentNim] = useState("");
+  const [studyProgram, setStudyProgram] = useState("Teknik Informatika");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -71,7 +98,13 @@ export default function NewDocumentPage() {
           title: title.trim(),
           topic: topic.trim(),
           documentType: docType,
+          templateKey,
           citationStyle: citation,
+          authorName: authorName.trim() || undefined,
+          studentNim: studentNim.trim() || undefined,
+          studyProgram: studyProgram || "Teknik Informatika",
+          institution: "Universitas STEKOM",
+          academicYear: new Date().getFullYear().toString(),
         }),
       });
       const data = await res.json();
@@ -91,16 +124,16 @@ export default function NewDocumentPage() {
           Inisiasi Dokumen Akademik
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Pilih template standar dan masukkan ide penelitian. YuuTA akan menyiapkan struktur outline secara otomatis.
+          Pilih template standar kampus dan masukkan ide penelitian. YuuTA akan menyiapkan struktur outline & format dokumen Word resmi secara otomatis.
         </p>
       </div>
 
       {/* Steps Bar */}
       <div className="yuuta-card p-4 bg-white dark:bg-slate-900 border border-sky-100 dark:border-slate-800 flex items-center justify-between sm:justify-start gap-4 sm:gap-8">
         {[
-          { num: 1, title: "Template" },
+          { num: 1, title: "Template & Kampus" },
           { num: 2, title: "Gaya Sitasi" },
-          { num: 3, title: "Detail Riset" },
+          { num: 3, title: "Detail Riset & Cover" },
         ].map((s) => {
           const isDone = step > s.num;
           const isCurrent = step === s.num;
@@ -136,13 +169,13 @@ export default function NewDocumentPage() {
 
       {/* Main Content Card */}
       <div className="yuuta-card p-6 sm:p-8 bg-white dark:bg-slate-900 border border-sky-100 dark:border-slate-800 shadow-xl shadow-sky-900/5">
-        {/* Step 1: Document Type */}
+        {/* Step 1: Document Type & University Template */}
         {step === 1 && (
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">Pilih Format Penulisan</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Pilih format sesuai dengan tujuan publikasi atau tugas akhir Anda.
+                Pilih format sesuai tujuan tugas akhir atau proposal Anda.
               </p>
             </div>
 
@@ -194,6 +227,62 @@ export default function NewDocumentPage() {
               })}
             </div>
 
+            {/* Template Universitas Selector (Hanya muncul jika PROPOSAL dipilih) */}
+            {docType === "PROPOSAL" && (
+              <div className="pt-2 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Pilih Template Pedoman Kampus
+                  </h3>
+                </div>
+
+                <div className="space-y-3">
+                  {UNIVERSITY_TEMPLATES.map((tpl) => {
+                    const isSelected = templateKey === tpl.key;
+
+                    return (
+                      <div
+                        key={tpl.key}
+                        onClick={() => setTemplateKey(tpl.key)}
+                        className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-sky-50/80 dark:bg-sky-950/40 border-sky-500 dark:border-sky-400 shadow-sm"
+                            : "bg-slate-50/40 dark:bg-slate-800/20 border-slate-200 dark:border-slate-700"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                                {tpl.name}
+                              </h4>
+                              {tpl.recommended && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+                                  Template Aktif
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs font-medium text-sky-700 dark:text-sky-400 mt-0.5">
+                              {tpl.faculty}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                              {tpl.desc}
+                            </p>
+                          </div>
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                            isSelected ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300 dark:border-slate-600"
+                          }`}>
+                            {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="pt-4 flex justify-end">
               <button
                 type="button"
@@ -213,7 +302,7 @@ export default function NewDocumentPage() {
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">Pilih Pedoman Sitasi & Referensi</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Format sitasi akan digunakan oleh AI untuk menyusun rekomendasi referensi akademik.
+                Format sitasi akan digunakan oleh AI untuk menyusun daftar pustaka dan sitasi dalam teks secara konsisten.
               </p>
             </div>
 
@@ -233,7 +322,6 @@ export default function NewDocumentPage() {
                     }`}
                   >
                     <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                      {/* Icon Container */}
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                           isSelected
@@ -244,7 +332,6 @@ export default function NewDocumentPage() {
                         <Quote className="w-5 h-5" />
                       </div>
 
-                      {/* Text Content */}
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           <h3 className="font-bold text-sm text-slate-900 dark:text-white">
@@ -274,7 +361,6 @@ export default function NewDocumentPage() {
                       </div>
                     </div>
 
-                    {/* Radio Indicator */}
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                         isSelected
@@ -311,13 +397,13 @@ export default function NewDocumentPage() {
           </div>
         )}
 
-        {/* Step 3: Title & Topic Details */}
+        {/* Step 3: Title, Topic & Cover Details */}
         {step === 3 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Detail Topik & Judul Penelitian</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Detail Penelitian & Halaman Sampul</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Berikan gambaran topik yang jelas agar AI dapat menyusun outline dan pertanyaan pemandu yang presisi.
+                Masukkan judul dan deskripsi riset, serta data mahasiswa untuk dicetak langsung pada cover Word (.docx).
               </p>
             </div>
 
@@ -330,44 +416,102 @@ export default function NewDocumentPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-                  Judul Rencana Dokumen
+                  Judul Rencana Dokumen <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="doc-title"
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Contoh: Analisis Kinerja Algoritma Klasifikasi Machine Learning pada Deteksi Hoaks"
+                  placeholder="Contoh: Pengembangan Sistem Reservasi dan Antrian Barbershop Berbasis Web Menggunakan Laravel"
                   className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-                  Deskripsi Singkat / Batasan Masalah
+                  Deskripsi Singkat / Masalah & Objek Riset <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   id="doc-topic"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  rows={4}
-                  placeholder="Jelaskan objek riset, metode yang direncanakan, atau masalah utama yang ingin dijawab. Contoh: Penelitian ini membandingkan akurasi antara algoritma Random Forest dan SVM untuk klasifikasi sentimen opini publik di Twitter."
+                  rows={3}
+                  placeholder="Jelaskan objek studi kasus (misal: Barbershop Rapioo Semarang), kendala antrian manual, serta metode atau algoritma yang diusulkan (misal: Algoritma FCFS dan framework Laravel)."
                   className="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all resize-y"
                 />
               </div>
 
+              {/* Data Identitas Mahasiswa untuk Cover Word */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 space-y-3">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-200/80 dark:border-slate-700/60">
+                  <User className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    Data Identitas Mahasiswa (Halaman Sampul Resmi)
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Nama Mahasiswa
+                    </label>
+                    <input
+                      type="text"
+                      value={authorName}
+                      onChange={(e) => setAuthorName(e.target.value)}
+                      placeholder="Contoh: DWI PURNOMO"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
+                      <Hash className="w-3 h-3" />
+                      <span>NIM</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={studentNim}
+                      onChange={(e) => setStudentNim(e.target.value)}
+                      placeholder="Contoh: 1122100154"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Program Studi
+                    </label>
+                    <select
+                      value={studyProgram}
+                      onChange={(e) => setStudyProgram(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40 cursor-pointer"
+                    >
+                      {STUDY_PROGRAMS.map((sp) => (
+                        <option key={sp} value={sp}>
+                          {sp}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               {/* Summary Pill */}
               <div className="p-3.5 rounded-xl bg-sky-50/70 dark:bg-slate-800/40 border border-sky-100 dark:border-slate-800 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                <div className="flex flex-wrap items-center gap-2 text-slate-600 dark:text-slate-400">
                   <FileText className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                  <span>Template: <strong className="text-slate-900 dark:text-white">{docType}</strong></span>
+                  <span>Format: <strong className="text-slate-900 dark:text-white">{docType === "PROPOSAL" ? "Proposal Penelitian (STEKOM)" : "Skripsi (BAB I-V)"}</strong></span>
                   <span>•</span>
-                  <span>Gaya Sitasi: <strong className="text-slate-900 dark:text-white">{citation}</strong></span>
+                  <span>Prodi: <strong className="text-slate-900 dark:text-white">{studyProgram}</strong></span>
+                  <span>•</span>
+                  <span>Sitasi: <strong className="text-slate-900 dark:text-white">{citation}</strong></span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="text-sky-600 dark:text-sky-400 hover:underline font-semibold"
+                  className="text-sky-600 dark:text-sky-400 hover:underline font-semibold text-xs"
                 >
                   Ubah
                 </button>

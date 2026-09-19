@@ -31,7 +31,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { title, topic, documentType, citationStyle } = await req.json();
+    const {
+      title,
+      topic,
+      documentType,
+      citationStyle,
+      templateKey,
+      authorName,
+      studentNim,
+      studyProgram,
+      institution,
+      academicYear,
+    } = await req.json();
 
     if (!title || !topic || !documentType) {
       return NextResponse.json(
@@ -55,6 +66,12 @@ export async function POST(req: NextRequest) {
         title,
         topic,
         documentType: documentType as DocumentType,
+        templateKey: templateKey || "STEKOM",
+        authorName: authorName || session.user!.name || null,
+        studentNim: studentNim || null,
+        studyProgram: studyProgram || "Teknik Informatika",
+        institution: institution || "Universitas STEKOM",
+        academicYear: academicYear || new Date().getFullYear().toString(),
         citationStyle: (citationStyle as CitationStyle) ?? "APA",
         sections: {
           create: templateSections.map((s) => ({
